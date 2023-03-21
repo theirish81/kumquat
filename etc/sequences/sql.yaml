@@ -1,0 +1,26 @@
+description: sequence demonstrating sql connectivity
+accept_params: true
+requires:
+  - id
+steps:
+  # This step performs a query to PostgreSQL. It receives an input from the inbound API call to
+  # that is then used in the "where" statement
+  - name: postgres
+    type: sql
+    config:
+      driver: postgres
+      URI: '${Values.postgres_uri}'
+      select: 'select * from table1 where id=${Params.id}'
+  # This is just a regular query to MariaDB/MySQL
+  - name: mariadb
+    type: sql
+    config:
+      driver: mysql
+      URI: '${Values.mysql_uri}'
+      select: 'select * from db'
+  - name: sqlserver
+    type: sql
+    config:
+      driver: mssql
+      URI: 'sqlserver://sa:password123!@localhost?database=master&connection+timeout=30'
+      select: 'select * from banana2'

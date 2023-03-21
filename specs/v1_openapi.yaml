@@ -1,0 +1,89 @@
+openapi: 3.0.0
+info:
+  title: Kumquat
+  description: the API for Kumquat
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000/v1
+
+paths:
+  "/login/authorize":
+    get:
+      description: login using basic authentication. Will return a JWT token in exchange
+      security:
+        - basicAuth: []
+      responses:
+        200:
+          description: the user authenticated
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/token"
+  "/sequence/{sequenceId}/_run":
+    parameters:
+      - name: sequenceId
+        in: path
+        schema:
+          type: string
+        required: true
+    get:
+      description: runs a sequence
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/seq'
+    post:
+      description: runs a sequence passing extra parameters
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+      responses:
+        200:
+          $ref: '#/components/responses/seq'
+
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    token:
+      type: object
+      required:
+        - access_token
+      properties:
+        access_token:
+          type: string
+    executionLog:
+      type: object
+      properties:
+        description:
+          type: string
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              value:
+                description: value
+  responses:
+    seq:
+      description: successfully executed a sequence
+      content:
+        "application/json":
+          schema:
+            $ref: "#/components/schemas/executionLog"
+

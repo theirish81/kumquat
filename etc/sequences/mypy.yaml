@@ -1,0 +1,10 @@
+description: running python
+accept_params: true
+requires:
+  - number
+steps:
+  - name: prime
+    type: nixShellCommand
+    config:
+      stdin: true
+      command: 'python3 etc/scripts/primes.py'

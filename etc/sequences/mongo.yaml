@@ -1,0 +1,12 @@
+accept_params: true
+requires:
+  - name
+steps:
+  - name: data
+    type: mongo
+    config:
+      URI: '${Values.mongodb_uri}'
+      db: test_data
+      collection: tests
+      find:
+        name: '${Params.name}'

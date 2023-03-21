@@ -1,0 +1,28 @@
+description: random sequence of nix commands and filters
+steps:
+  # Find Dockerfile
+  - name: find_test_file
+    type: nixShellCommand
+    config:
+      command: ls -lha etc | grep test.md
+  # Listing all the running processes. After that, we split the output into an array of lines. We hide this item
+  # from results because this is just an intermediate tep
+  - name: processes
+    type: nixShellCommand
+    config:
+      command: ps aux
+    filters:
+      - type: splitLines
+  # Taking the first process in the list, splitting the components and printing the resulting array
+  - name: firstProcess
+    type: template
+    config:
+      template: "${processes[0]}"
+    filters:
+      - type: replace
+        config:
+          regexp: '\s\s+'
+          replace: ' '
+      - type: split
+        config:
+          sep: ' '

@@ -1,0 +1,4 @@
+key: ABC123
+postgres_uri: postgres://example:example@localhost:5432?sslmode=disable
+mysql_uri: root:root@tcp(127.0.0.1:3306)/mysql
+mongodb_uri: mongodb://localhost:27017
