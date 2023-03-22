@@ -12,8 +12,9 @@ require (
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/lib/pq v1.10.6
 	github.com/rs/zerolog v1.27.0
-	github.com/theirish81/gowalker v0.4.6
+	github.com/theirish81/gowalker v0.4.7
 	go.mongodb.org/mongo-driver v1.9.0
+	golang.org/x/crypto v0.6.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -38,7 +39,6 @@ require (
 	github.com/xdg-go/scram v1.0.2 // indirect
 	github.com/xdg-go/stringprep v1.0.2 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
-	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/sys v0.5.0 // indirect
