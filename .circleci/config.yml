@@ -19,6 +19,7 @@ jobs:
   build:
     docker:
       - image: golang:latest
+    resource_class: small
     steps:
       - attach_workspace:
           at: .
@@ -34,6 +35,7 @@ jobs:
   release:
     docker:
       - image: cibuilds/github:0.10
+    resource_class: small
     steps:
       - attach_workspace:
           at: .
@@ -44,6 +46,7 @@ jobs:
   dockerPush:
     docker:
       - image: docker:17.05.0-ce-git
+    resource_class: small
     steps:
       - attach_workspace:
           at: .
