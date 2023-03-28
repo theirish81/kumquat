@@ -19,6 +19,7 @@ import (
 	"github.com/theirish81/kumquat/internal"
 )
 
+// API server configuration
 type API struct {
 	privateKey *rsa.PrivateKey
 	publicKey  *rsa.PublicKey
@@ -38,6 +39,7 @@ const keyPrivateKeyPath = "PRIVATE_KEY_PATH"
 const keyPublicKeyPath = "PUBLIC_KEY_PATH"
 const keyTokenDuration = "TOKEN_DURATION"
 
+// NewAPI is the constructor of the API server
 func NewAPI() (*API, error) {
 	priv, err := getPrivateKey()
 	if err != nil {
@@ -57,6 +59,7 @@ func NewAPI() (*API, error) {
 	return &api, nil
 }
 
+// initRoutes initializes all the routes
 func (a API) initRoutes() {
 	a.server.Group(v1LoginBasePath, middleware.BasicAuth(func(username string, password string, ctx echo.Context) (bool, error) {
 		ux := a.users.Authenticate(username, password)
@@ -76,10 +79,12 @@ func (a API) initRoutes() {
 	})).Any(runPath, a.SequenceRun)
 }
 
+// Run synchronously runs the API server
 func (a API) Run() {
 	_ = http.ListenAndServe(":5000", a.server)
 }
 
+// Authorize is the route that, given an auth.User in the context, produces a JWT token
 func (a API) Authorize(c echo.Context) error {
 	user := c.Get(contextKey).(*auth.User)
 	token := jwt.NewWithClaims(jwt.SigningMethodRS512, newClaimsFromUser(user))
@@ -91,6 +96,7 @@ func (a API) Authorize(c echo.Context) error {
 
 }
 
+// SequenceRun runs a sequence
 func (a API) SequenceRun(c echo.Context) error {
 	claims := c.Get(contextKey).(*jwt.Token).Claims.(*v1.Claims)
 	sequenceId := c.Param("id")
@@ -124,6 +130,7 @@ func (a API) SequenceRun(c echo.Context) error {
 	return c.JSON(200, result)
 }
 
+// extractParams extracts the parameters from a request body
 func extractParams(r *http.Request) (map[string]any, error) {
 	if data, err := io.ReadAll(r.Body); err == nil {
 		if len(data) > 0 {
@@ -139,6 +146,7 @@ func extractParams(r *http.Request) (map[string]any, error) {
 	}
 }
 
+// getPrivateKey loads and parses the private key
 func getPrivateKey() (*rsa.PrivateKey, error) {
 	keysPath := os.Getenv(keyPrivateKeyPath)
 	if len(keysPath) == 0 {
@@ -151,6 +159,7 @@ func getPrivateKey() (*rsa.PrivateKey, error) {
 	return jwt.ParseRSAPrivateKeyFromPEM(data)
 }
 
+// getPublicKey loads and parses the public key
 func getPublicKey() (*rsa.PublicKey, error) {
 	keysPath := os.Getenv(keyPublicKeyPath)
 	if len(keysPath) == 0 {
@@ -163,6 +172,7 @@ func getPublicKey() (*rsa.PublicKey, error) {
 	return jwt.ParseRSAPublicKeyFromPEM(data)
 }
 
+// newClaimsFromUser takes an auth.User and converts it into JWT claims
 func newClaimsFromUser(user *auth.User) v1.Claims {
 	tokenDurationString := os.Getenv(keyTokenDuration)
 	tokenDuration := 24 * time.Hour
