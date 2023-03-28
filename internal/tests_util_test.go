@@ -13,3 +13,21 @@ func TestPrototypeCheck(t *testing.T) {
 		t.Error("prototype check did not return a failure", err)
 	}
 }
+
+func TestIsSequenceAllowed(t *testing.T) {
+	if !IsSequenceAllowed("foo") {
+		t.Error("correct sequence name was rejected")
+	}
+	if IsSequenceAllowed("foo.bar") {
+		t.Error("invalid sequence not rejected")
+	}
+	if IsSequenceAllowed("foo/bar") {
+		t.Error("invalid sequence not rejected")
+	}
+	if IsSequenceAllowed("foo\\bar") {
+		t.Error("invalid sequence not rejected")
+	}
+	if IsSequenceAllowed("foo\"bar") {
+		t.Error("invalid sequence not rejected")
+	}
+}

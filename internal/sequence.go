@@ -3,9 +3,10 @@ package internal
 import (
 	"context"
 	"errors"
+	"os"
+
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v3"
-	"os"
 )
 
 // Sequence is a sequence of operations

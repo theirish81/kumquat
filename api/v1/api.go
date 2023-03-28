@@ -104,7 +104,10 @@ func (a API) SequenceRun(c echo.Context) error {
 		return c.JSON(403, v1.Error{Code: 403, Message: "cannot access sequence"})
 	}
 
-	seqPath := internal.GetSequencePath(sequenceId)
+	seqPath, err := internal.GetSequencePath(sequenceId)
+	if err != nil {
+		return c.JSON(400, v1.Error{Code: 400, Message: "sequence name not allowed"})
+	}
 	sequence, err := internal.LoadSequence(seqPath)
 	if err != nil {
 		return c.JSON(500, v1.Error{Code: 500, Message: "sequence error"})
