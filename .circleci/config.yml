@@ -58,7 +58,7 @@ jobs:
             tag=`echo ${CIRCLE_TAG} | cut -b 2-999`
             majmin=`echo $tag | cut -d . -f 1-2`
             maj=`echo $tag | cut -d . -f 1`
-            docker build -t theirish81/kumquat:${tag} .
+            docker build --pull -t theirish81/kumquat:${tag} .
             docker tag theirish81/kumquat:${tag} theirish81/kumquat:${majmin}
             docker tag theirish81/kumquat:${tag} theirish81/kumquat:${maj}
             docker tag theirish81/kumquat:${tag} theirish81/kumquat:latest
