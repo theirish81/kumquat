@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"reflect"
+	"strings"
 )
 
 type Proto map[string]string
@@ -38,12 +39,15 @@ func SetDefault(config map[string]any, key string, value any) map[string]any {
 	return config
 }
 
-func GetSequencePath(seq string) string {
-	etcPath := os.Getenv("SEQUENCES_PATH")
-	if len(etcPath) == 0 {
-		etcPath = "etc/sequences"
+func GetSequencePath(seq string) (string, error) {
+	if !IsSequenceAllowed(seq) {
+		return "", errors.New("sequence name not allowed")
 	}
-	return path.Join(etcPath, seq+".yaml")
+	sequencePath := os.Getenv("SEQUENCES_PATH")
+	if len(sequencePath) == 0 {
+		sequencePath = "etc/sequences"
+	}
+	return path.Join(sequencePath, seq+".yaml"), nil
 }
 
 func GetUsersPath() string {
@@ -52,4 +56,13 @@ func GetUsersPath() string {
 		usersPath = "etc/users.yaml"
 	}
 	return usersPath
+}
+
+func IsSequenceAllowed(seq string) bool {
+	for _, char := range []string{".", "\\", "/", "|", "{", "[", "$", "\"", "%", "(", "=", "?"} {
+		if strings.Contains(seq, char) {
+			return false
+		}
+	}
+	return true
 }
