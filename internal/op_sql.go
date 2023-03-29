@@ -101,7 +101,14 @@ func (o *SqlOp) castMap(rx *map[string]any, rows *sqlx.Rows) {
 				}
 
 			}
-		case "int", "int8", "int16", "int32", "int64":
+		case "NullFloat64":
+			if rxData[columnName] != nil {
+				if bytes, ok := rxData[columnName].([]byte); ok {
+					data, _ := strconv.ParseFloat(string(bytes), 64)
+					rxData[columnName] = data
+				}
+			}
+		case "int", "int8", "int16", "int32", "int64", "NullInt64":
 			if rxData[columnName] != nil {
 				if bytes, ok := rxData[columnName].([]byte); ok {
 					data, _ := strconv.Atoi(string(bytes))
@@ -111,7 +118,7 @@ func (o *SqlOp) castMap(rx *map[string]any, rows *sqlx.Rows) {
 		default:
 			if rxData[columnName] != nil {
 				switch cType.DatabaseTypeName() {
-				case "TIMESTAMP":
+				case "TIMESTAMP", "DATETIME":
 					if bytes, ok := rxData[columnName].([]byte); ok {
 						data := string(bytes)
 						rxData[columnName] = data
