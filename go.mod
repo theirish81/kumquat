@@ -4,14 +4,14 @@ go 1.19
 
 require (
 	github.com/bitly/go-simplejson v0.5.0
-	github.com/denisenkom/go-mssqldb v0.12.2
-	github.com/go-sql-driver/mysql v1.6.0
-	github.com/golang-jwt/jwt/v4 v4.4.3
+	github.com/denisenkom/go-mssqldb v0.12.3
+	github.com/go-sql-driver/mysql v1.7.0
+	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/labstack/echo-jwt/v4 v4.1.0
 	github.com/labstack/echo/v4 v4.10.2
-	github.com/lib/pq v1.10.6
-	github.com/rs/zerolog v1.27.0
+	github.com/lib/pq v1.10.7
+	github.com/rs/zerolog v1.29.0
 	github.com/theirish81/gowalker v0.4.7
 	go.mongodb.org/mongo-driver v1.11.3
 	golang.org/x/crypto v0.7.0
