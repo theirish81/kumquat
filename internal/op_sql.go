@@ -86,6 +86,7 @@ func (o *SqlOp) Run(ctx context.Context) error {
 	return nil
 }
 
+// castMap deals with the inadequacies of sqlx when it comes to type mapping
 func (o *SqlOp) castMap(rx *map[string]any, rows *sqlx.Rows) {
 	columnTypes, _ := rows.ColumnTypes()
 	columnNames, _ := rows.Columns()
@@ -93,7 +94,7 @@ func (o *SqlOp) castMap(rx *map[string]any, rows *sqlx.Rows) {
 		cType := columnTypes[idx]
 		rxData := *rx
 		switch cType.ScanType().Name() {
-		case "RawBytes":
+		case "RawBytes", "NullTime":
 			if rxData[columnName] != nil {
 				if bytes, ok := rxData[columnName].([]byte); ok {
 					data := string(bytes)
@@ -101,7 +102,7 @@ func (o *SqlOp) castMap(rx *map[string]any, rows *sqlx.Rows) {
 				}
 
 			}
-		case "NullFloat64":
+		case "float32", "float64", "NullFloat32", "NullFloat64":
 			if rxData[columnName] != nil {
 				if bytes, ok := rxData[columnName].([]byte); ok {
 					data, _ := strconv.ParseFloat(string(bytes), 64)
