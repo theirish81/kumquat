@@ -2,9 +2,12 @@ package internal
 
 import (
 	"context"
+	"strconv"
+	"time"
+
+	"github.com/bitly/go-simplejson"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
-	"time"
 )
 
 // SqlOp is the operation that runs SQL queries
@@ -62,7 +65,9 @@ func (o *SqlOp) Run(ctx context.Context) error {
 			for rows.Next() {
 				// ... we convert the row into a map, and append it to the response array
 				rx := map[string]any{}
+
 				if err := rows.MapScan(rx); err == nil {
+					o.castMap(&rx, rows)
 					res = append(res, rx)
 				} else {
 					// In case the map conversion fails
@@ -79,6 +84,59 @@ func (o *SqlOp) Run(ctx context.Context) error {
 		return err
 	}
 	return nil
+}
+
+// castMap deals with the inadequacies of sqlx when it comes to type mapping
+func (o *SqlOp) castMap(rx *map[string]any, rows *sqlx.Rows) {
+	columnTypes, _ := rows.ColumnTypes()
+	columnNames, _ := rows.Columns()
+	for idx, columnName := range columnNames {
+		cType := columnTypes[idx]
+		rxData := *rx
+		switch cType.ScanType().Name() {
+		case "RawBytes", "NullTime":
+			if rxData[columnName] != nil {
+				if bytes, ok := rxData[columnName].([]byte); ok {
+					data := string(bytes)
+					rxData[columnName] = data
+				}
+
+			}
+		case "float32", "float64", "NullFloat32", "NullFloat64":
+			if rxData[columnName] != nil {
+				if bytes, ok := rxData[columnName].([]byte); ok {
+					data, _ := strconv.ParseFloat(string(bytes), 64)
+					rxData[columnName] = data
+				}
+			}
+		case "int", "int8", "int16", "int32", "int64", "NullInt64":
+			if rxData[columnName] != nil {
+				if bytes, ok := rxData[columnName].([]byte); ok {
+					data, _ := strconv.Atoi(string(bytes))
+					rxData[columnName] = data
+				}
+			}
+		default:
+			if rxData[columnName] != nil {
+				switch cType.DatabaseTypeName() {
+				case "TIMESTAMP", "DATETIME":
+					if bytes, ok := rxData[columnName].([]byte); ok {
+						data := string(bytes)
+						rxData[columnName] = data
+					}
+				case "VARCHAR":
+					if str, ok := rxData[columnName].(string); ok {
+						rxData[columnName] = str
+					}
+				case "JSONB":
+					if bytes, ok := rxData[columnName].([]byte); ok {
+						js, _ := simplejson.NewJson(bytes)
+						rxData[columnName] = js
+					}
+				}
+			}
+		}
+	}
 }
 
 // GetResult will return the result of the query
