@@ -1,4 +1,11 @@
 description: pulling data off demoapi, and printing the ID of the product
+accept_params: true
+requires:
+  required:
+    - id
+  properties:
+    id:
+      type: integer
 steps:
   # We run a cURL command against a URL that returns JSON. Notice how we're pulling the
   # key out of the Values file. Once we get the result, we parse it into a JSON using
@@ -6,7 +13,7 @@ steps:
   - name: demoapi
     type: nixShellCommand
     config:
-      command: 'curl http://demoapi.apifortress.com/api/retail/product/1 -H "key:${Values.key}"'
+      command: 'curl http://demoapi.apifortress.com/api/retail/product/${Params.id} -H "key:${Values.key}"'
     filters:
       - type: jsonParse
   # We use the template operation to select and print the ID of the retrieved payload

@@ -1,6 +1,10 @@
 accept_params: true
 requires:
-  - name
+  required:
+    - name
+  properties:
+    name:
+      type: string
 steps:
   - name: data
     type: mongo

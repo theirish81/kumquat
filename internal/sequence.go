@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/rs/zerolog/log"
+	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v3"
 )
 
@@ -15,7 +16,7 @@ type Sequence struct {
 	Description  string   `yaml:"description"`
 	Steps        []*Step  `yaml:"steps"`
 	AcceptParams bool     `yaml:"accept_params"`
-	Requires     []string `yaml:"requires"`
+	Requires     any      `yaml:"requires"`
 	Scope        *Scope
 }
 
@@ -54,10 +55,13 @@ func (s *Sequence) Run(ctx context.Context) {
 // CheckRequires will check that the provided map has at least the fields described in the "Requires" list
 func (s *Sequence) CheckRequires(data map[string]any) error {
 	if s.Requires != nil {
-		for _, r := range s.Requires {
-			if _, ok := data[r]; !ok {
-				return errors.New("required parameter missing: " + r)
+		if res, err := gojsonschema.Validate(gojsonschema.NewRawLoader(s.Requires), gojsonschema.NewRawLoader(data)); err == nil {
+			if res.Valid() {
+				return nil
 			}
+			return errors.New(res.Errors()[0].String())
+		} else {
+			return err
 		}
 	}
 	return nil

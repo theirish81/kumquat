@@ -2,30 +2,24 @@ package internal
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path"
-	"reflect"
 	"strings"
+
+	"github.com/xeipuuv/gojsonschema"
 )
 
 type Proto map[string]string
 
-const TYPE_STRING = "string"
-const TYPE_MAP = "map[string]interface {}"
-const TYPE_INT = "int"
-const TYPE_ARRAY = "[]string"
-const TYPE_BOOL = "bool"
-
-// PrototypeCheck verifies that the provided config map matches the proposed protocol
-func PrototypeCheck(config map[string]any, proto Proto) error {
-	for k, oType := range proto {
-		if val, ok := config[k]; ok {
-			if reflect.TypeOf(val).String() != oType {
-				return errors.New("field " + k + " is not the right type")
-			}
-		} else {
-			return errors.New("required field " + k + " was not provided")
-		}
+func PrototypeCheck(config map[string]any, schema string) error {
+	res, err := gojsonschema.Validate(gojsonschema.NewStringLoader(schema), gojsonschema.NewRawLoader(config))
+	if err != nil {
+		return err
+	}
+	if !res.Valid() {
+		fmt.Println(res.Errors())
+		return errors.New("invalid sequence configuration")
 	}
 	return nil
 }

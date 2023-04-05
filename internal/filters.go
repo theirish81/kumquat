@@ -2,8 +2,8 @@ package internal
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
-	"github.com/bitly/go-simplejson"
 	"regexp"
 	"strings"
 )
@@ -13,10 +13,10 @@ type IFilter interface {
 	Run(ctx context.Context, input any) (any, error)
 }
 
-const FILTER_SPLITLINES = "splitLines"
-const FILTER_SPLIT = "split"
-const FILTER_JSONPARSE = "jsonParse"
-const FILTER_REPLACE = "replace"
+const FilterSplitLines = "splitLines"
+const FilterSplit = "split"
+const FilterJsonParse = "jsonParse"
+const FilterReplace = "replace"
 
 // Filter is the wrapping structure of all filters
 type Filter struct {
@@ -27,13 +27,13 @@ type Filter struct {
 // GetImplementation will return the IFilter proper implementation
 func (f *Filter) GetImplementation() (IFilter, error) {
 	switch f.Type {
-	case FILTER_SPLITLINES:
+	case FilterSplitLines:
 		return NewSplitLinesFilter(), nil
-	case FILTER_SPLIT:
+	case FilterSplit:
 		return NewSplitFilter(f.Config)
-	case FILTER_JSONPARSE:
+	case FilterJsonParse:
 		return NewJsonParseFilter(), nil
-	case FILTER_REPLACE:
+	case FilterReplace:
 		return NewRegexpReplaceFilter(f.Config)
 	default:
 		return nil, errors.New("could not find a proper implementation for " + f.Type)
@@ -68,9 +68,20 @@ type SplitFilter struct {
 	Sep string
 }
 
+const splitFilterSchema = `{
+	"required": [
+		"sep"
+	],
+	"properties": {
+		"sep": {
+			"type": "string"
+		}
+	}
+}`
+
 // NewSplitFilter is the constructor for SplitFilter
 func NewSplitFilter(config map[string]any) (*SplitFilter, error) {
-	if err := PrototypeCheck(config, Proto{"sep": TYPE_STRING}); err == nil {
+	if err := PrototypeCheck(config, splitFilterSchema); err == nil {
 		return &SplitFilter{Sep: config["sep"].(string)}, nil
 	} else {
 		return nil, err
@@ -106,20 +117,9 @@ func NewJsonParseFilter() *JsonParseFilter {
 
 // Run will run the filter, transforming the input and returning the transformed data
 func (f *JsonParseFilter) Run(_ context.Context, input any) (any, error) {
-	data, err := simplejson.NewJson([]byte(input.(string)))
-	if err != nil {
-		return nil, err
-	}
-	if mx, err := data.Map(); err == nil {
-		return mx, nil
-	} else {
-		if ax, err := data.Array(); err == nil {
-			return ax, nil
-		} else {
-			return nil, err
-		}
-	}
-
+	var data any
+	err := json.Unmarshal([]byte(input.(string)), &data)
+	return data, err
 }
 
 // RegexpReplaceFilter is a filter that will take an input and replace any matching pattern described by
@@ -129,9 +129,24 @@ type RegexpReplaceFilter struct {
 	Replace string
 }
 
+const regexpReplaceFilterSchema = `{
+	"required": [
+		"regexp",
+		"replace"
+	],
+	"properties": {
+		"regexp": {
+			"type": "string"
+		},
+		"replace": {
+			"type": "string"
+		}
+	}
+}`
+
 // NewRegexpReplaceFilter is the constructor for RegexpReplaceFilter
 func NewRegexpReplaceFilter(config map[string]any) (*RegexpReplaceFilter, error) {
-	if err := PrototypeCheck(config, Proto{"regexp": TYPE_STRING, "replace": TYPE_STRING}); err == nil {
+	if err := PrototypeCheck(config, regexpReplaceFilterSchema); err == nil {
 		rx, err := regexp.Compile(config["regexp"].(string))
 		return &RegexpReplaceFilter{Regexp: rx, Replace: config["replace"].(string)}, err
 	} else {

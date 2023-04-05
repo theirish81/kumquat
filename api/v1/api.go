@@ -3,12 +3,12 @@ package v1
 import (
 	"context"
 	"crypto/rsa"
+	"encoding/json"
 	"io"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/bitly/go-simplejson"
 	"github.com/golang-jwt/jwt/v4"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -137,11 +137,9 @@ func (a API) SequenceRun(c echo.Context) error {
 func extractParams(r *http.Request) (map[string]any, error) {
 	if data, err := io.ReadAll(r.Body); err == nil {
 		if len(data) > 0 {
-			params, err := simplejson.NewJson(data)
-			if err != nil {
-				return nil, err
-			}
-			return params.Map()
+			var params map[string]any
+			err := json.Unmarshal(data, &params)
+			return params, err
 		}
 		return nil, nil
 	} else {

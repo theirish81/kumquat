@@ -2,9 +2,10 @@ package internal
 
 import (
 	"context"
+	"time"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 // MongoOp is the MongoDB database
@@ -18,6 +19,29 @@ type MongoOp struct {
 	Result     any
 }
 
+const mongoOpSchema = `{
+	"required": [
+		"URI",
+		"find",
+		"collection",
+		"timeout"
+	],
+	"properties": {
+		"URI": {
+			"type": "string"
+		},
+		"find": {
+			"type": "object"
+		},
+		"collection": {
+			"type": "string"
+		},
+		"timeout": {
+			"type": "string"
+		}
+	}
+}`
+
 // NewMongoOp is the constructor for MongoOp
 func NewMongoOp(config map[string]any, scope *Scope) (*MongoOp, error) {
 	config = SetDefault(config, "timeout", "10s")
@@ -25,8 +49,7 @@ func NewMongoOp(config map[string]any, scope *Scope) (*MongoOp, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := PrototypeCheck(config, Proto{"URI": TYPE_STRING, "db": TYPE_STRING, "collection": TYPE_STRING,
-		"find": TYPE_MAP, "timeout": TYPE_STRING}); err == nil {
+	if err := PrototypeCheck(config, mongoOpSchema); err == nil {
 		return &MongoOp{URI: config["URI"].(string), DB: config["db"].(string), Collection: config["collection"].(string),
 			Find: config["find"].(map[string]any), Timeout: duration, scope: scope}, nil
 	} else {

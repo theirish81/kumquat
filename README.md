@@ -54,11 +54,17 @@ This will populate the `Params` collection, therefore: `${Params.id}` will trans
 will translate into `foo`.
 
 Additionally, you can also add a `requires` section to the sequence, to list out the parameters which are necessary to
-complete the sequence, as in:
+complete the sequence. The expected content of this section is a JSON Schema:
 ```yaml
 requires:
-  - id
-  - name
+  required:
+    - id
+    - name
+  properties:
+    id:
+      type: integer
+    name:
+      type: string
 ```
 
 ## Results
