@@ -2,10 +2,11 @@ package internal
 
 import (
 	"context"
-	"github.com/rs/zerolog/log"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog/log"
 )
 
 // NixShellOp is an operation that runs a *NIX command
@@ -17,6 +18,25 @@ type NixShellOp struct {
 	scope   *Scope
 }
 
+const nixShellOpSchema = `{
+	"required": [
+		"command",
+		"stdin",
+		"timeout"
+	],
+	"properties": {
+		"command": {
+			"type":"string"
+		},
+		"stdin": {
+			"type":"boolean"
+		},
+		"timeout": {
+			"type":"string"
+		}
+	}
+}`
+
 // NewNixShellIOp constructor for NixShellOp
 func NewNixShellIOp(config map[string]any, scope *Scope) (*NixShellOp, error) {
 	config = SetDefault(config, "stdin", false)
@@ -25,8 +45,7 @@ func NewNixShellIOp(config map[string]any, scope *Scope) (*NixShellOp, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := PrototypeCheck(config,
-		Proto{"command": TYPE_STRING, "stdin": TYPE_BOOL, "timeout": TYPE_STRING}); err == nil {
+	if err := PrototypeCheck(config, nixShellOpSchema); err == nil {
 		return &NixShellOp{Command: config["command"].(string),
 			Stdin:   config["stdin"].(bool),
 			Timeout: duration,

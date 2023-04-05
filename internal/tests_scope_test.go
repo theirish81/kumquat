@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"github.com/bitly/go-simplejson"
 	"os"
 	"testing"
 )
@@ -20,8 +19,7 @@ func TestScope_LoadEnvs(t *testing.T) {
 
 func TestScope_InsertParams(t *testing.T) {
 	scope := NewScope()
-	dx, _ := simplejson.NewJson([]byte("{\"foo\":\"bar\"}"))
-	data, _ := dx.Map()
+	data := map[string]any{"foo": "bar"}
 	scope.InsertParams(data)
 	if k, _ := scope.Scope["Params"].(map[string]any)["foo"]; k != "bar" {
 		t.Error("params not set correctly")

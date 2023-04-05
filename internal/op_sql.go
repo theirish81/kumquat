@@ -2,10 +2,10 @@ package internal
 
 import (
 	"context"
+	"encoding/json"
 	"strconv"
 	"time"
 
-	"github.com/bitly/go-simplejson"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog/log"
 )
@@ -20,6 +20,29 @@ type SqlOp struct {
 	scope   *Scope
 }
 
+const sqlOpSchema = `{
+	"required": [
+		"driver",
+		"URI",
+		"select",
+		"timeout"
+	],
+	"properties": {
+		"driver": {
+			"type": "string"
+		},
+		"URI": {
+			"type": "string"
+		},
+		"select": {
+			"type": "string"
+		},
+		"timeout": {
+			"type": "string"
+		}
+    }
+}`
+
 // NewSqlOp constructor for SqlOp
 func NewSqlOp(config map[string]any, scope *Scope) (*SqlOp, error) {
 	config = SetDefault(config, "timeout", "10s")
@@ -27,7 +50,7 @@ func NewSqlOp(config map[string]any, scope *Scope) (*SqlOp, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := PrototypeCheck(config, Proto{"driver": TYPE_STRING, "URI": TYPE_STRING, "select": TYPE_STRING}); err == nil {
+	if err := PrototypeCheck(config, sqlOpSchema); err == nil {
 		return &SqlOp{Driver: config["driver"].(string), URI: config["URI"].(string), Select: config["select"].(string),
 			Timeout: duration, scope: scope}, nil
 	} else {
@@ -130,7 +153,8 @@ func (o *SqlOp) castMap(rx *map[string]any, rows *sqlx.Rows) {
 					}
 				case "JSONB":
 					if bytes, ok := rxData[columnName].([]byte); ok {
-						js, _ := simplejson.NewJson(bytes)
+						var js any
+						_ = json.Unmarshal(bytes, &js)
 						rxData[columnName] = js
 					}
 				}

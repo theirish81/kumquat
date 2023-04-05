@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"errors"
+
 	"github.com/rs/zerolog/log"
 )
 
@@ -19,15 +20,15 @@ type Step struct {
 // GetImplementation will return the proper IOperation implementation for the current step
 func (s *Step) GetImplementation() (IOperation, error) {
 	switch s.Type {
-	case OP_NIX_SHELL:
+	case OpNixShell:
 		return NewNixShellIOp(s.Config, s.scope)
-	case OP_TEMPLATE:
+	case OpTemplate:
 		return NewTemplateOp(s.Config, s.scope)
-	case OP_WAIT:
+	case OpWait:
 		return NewWaitOp(s.Config)
-	case OP_SQL:
+	case OpSql:
 		return NewSqlOp(s.Config, s.scope)
-	case OP_MONGO:
+	case OpMongo:
 		return NewMongoOp(s.Config, s.scope)
 	default:
 		return nil, errors.New("could not find a proper implementation for " + s.Type)

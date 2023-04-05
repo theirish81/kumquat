@@ -9,9 +9,21 @@ type TemplateOp struct {
 	scope    *Scope
 }
 
+const templateOpSchema = `{
+	"required": [
+		"template"
+	],
+	"properties": {
+		"template": {
+			"type": "string"
+		}
+	}
+}
+`
+
 // NewTemplateOp is the constructor for TemplateOp
 func NewTemplateOp(config map[string]any, scope *Scope) (*TemplateOp, error) {
-	if err := PrototypeCheck(config, Proto{"template": TYPE_STRING}); err == nil {
+	if err := PrototypeCheck(config, templateOpSchema); err == nil {
 		return &TemplateOp{Template: config["template"].(string), scope: scope}, nil
 	} else {
 		return nil, err

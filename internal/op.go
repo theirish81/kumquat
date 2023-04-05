@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
@@ -13,8 +14,8 @@ type IOperation interface {
 	GetResult() any
 }
 
-const OP_MONGO = "mongo"
-const OP_NIX_SHELL = "nixShellCommand"
-const OP_SQL = "sql"
-const OP_TEMPLATE = "template"
-const OP_WAIT = "wait"
+const OpMongo = "mongo"
+const OpNixShell = "nixShellCommand"
+const OpSql = "sql"
+const OpTemplate = "template"
+const OpWait = "wait"

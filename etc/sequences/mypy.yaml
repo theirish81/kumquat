@@ -1,7 +1,11 @@
 description: running python
 accept_params: true
 requires:
-  - number
+  required:
+    - number
+  properties:
+    number:
+      type: integer
 steps:
   - name: prime
     type: nixShellCommand

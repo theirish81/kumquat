@@ -1,7 +1,11 @@
 description: sequence demonstrating sql connectivity
 accept_params: true
 requires:
-  - id
+  required:
+    - id
+  properties:
+    id:
+      type: integer
 steps:
   # This step performs a query to PostgreSQL. It receives an input from the inbound API call to
   # that is then used in the "where" statement

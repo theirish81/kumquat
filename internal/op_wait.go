@@ -10,9 +10,20 @@ type WaitOp struct {
 	duration time.Duration
 }
 
+const waitOpSchema = `{
+	"required": [
+		"duration"
+	],
+	"properties": {
+		"duration": {
+			"type": "string"
+		}
+	}
+}`
+
 // NewWaitOp is the constructor for WaitOp
 func NewWaitOp(config map[string]any) (*WaitOp, error) {
-	if err := PrototypeCheck(config, Proto{"duration": TYPE_STRING}); err == nil {
+	if err := PrototypeCheck(config, waitOpSchema); err == nil {
 		d, err := time.ParseDuration(config["duration"].(string))
 		return &WaitOp{duration: d}, err
 	} else {

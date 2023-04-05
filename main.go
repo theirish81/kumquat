@@ -1,10 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	v1 "github.com/theirish81/kumquat/api/v1"
-	"os"
 )
 
 func main() {
