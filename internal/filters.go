@@ -6,6 +6,8 @@ import (
 	"errors"
 	"regexp"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // IFilter is the prototype of all filters
@@ -16,6 +18,7 @@ type IFilter interface {
 const FilterSplitLines = "splitLines"
 const FilterSplit = "split"
 const FilterJsonParse = "jsonParse"
+const FilterYamlParse = "yamlParse"
 const FilterReplace = "replace"
 
 // Filter is the wrapping structure of all filters
@@ -33,6 +36,8 @@ func (f *Filter) GetImplementation() (IFilter, error) {
 		return NewSplitFilter(f.Config)
 	case FilterJsonParse:
 		return NewJsonParseFilter(), nil
+	case FilterYamlParse:
+		return NewYamlParseFilter(), nil
 	case FilterReplace:
 		return NewRegexpReplaceFilter(f.Config)
 	default:
@@ -119,6 +124,21 @@ func NewJsonParseFilter() *JsonParseFilter {
 func (f *JsonParseFilter) Run(_ context.Context, input any) (any, error) {
 	var data any
 	err := json.Unmarshal([]byte(input.(string)), &data)
+	return data, err
+}
+
+// YamlParseFilter is a filter that transforms text to a YAML structure
+type YamlParseFilter struct{}
+
+// NewYamlParseFilter is the constructor for YamlParseFilter
+func NewYamlParseFilter() *YamlParseFilter {
+	return &YamlParseFilter{}
+}
+
+// Run will run the filter, transforming the input and returning the transformed data
+func (f *YamlParseFilter) Run(_ context.Context, input any) (any, error) {
+	var data any
+	err := yaml.Unmarshal([]byte(input.(string)), &data)
 	return data, err
 }
 

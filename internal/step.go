@@ -30,6 +30,8 @@ func (s *Step) GetImplementation() (IOperation, error) {
 		return NewSqlOp(s.Config, s.scope)
 	case OpMongo:
 		return NewMongoOp(s.Config, s.scope)
+	case OpFile:
+		return NewFileOp(s.Config, s.scope)
 	default:
 		return nil, errors.New("could not find a proper implementation for " + s.Type)
 	}
