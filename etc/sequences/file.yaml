@@ -1,4 +1,4 @@
-description: echoes the content of a sub-variable
+description: prints the content of a file
 
 steps:
   - name: printFile
