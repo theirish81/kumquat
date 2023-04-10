@@ -80,6 +80,12 @@ The fields common to all steps are:
   results (default: `false`)
 * `config`: a map of values containing the implementation specific parameters
 
+### file
+Loads a file from the file system. The config keys are:
+* `path`: the path to the file
+* `basePath`: the base path for the file
+* `raw`: if set to `true` the output will be binary, base64 encoded
+
 ### nixShellCommand
 Executes *NIX shell command. The config keys are:
 * `command`: the *NIX command itself
@@ -120,6 +126,9 @@ splits the output string into an array, using a provided separator sequence
 
 ### jsonParse
 parses the output string into a JSON data structure
+
+### yamlParse
+parses the output string into a YAML data structure
 
 ### replace
 replaces a substring matching a regular expression, with a provided string

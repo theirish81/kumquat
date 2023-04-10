@@ -1,6 +1,9 @@
-description: prints a file
+description: prints the content of a file
+
 steps:
-  - name: myFile
-    type: nixShellCommand
+  - name: printFile
+    type: file
     config:
-      command: cat etc/test.md
+      basePath: etc
+      path: test.md
+      raw: false

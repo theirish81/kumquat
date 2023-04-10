@@ -1,0 +1,6 @@
+description: prints a file
+steps:
+  - name: myFile
+    type: nixShellCommand
+    config:
+      command: cat etc/test.md
