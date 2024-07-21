@@ -3,8 +3,8 @@ package internal
 import (
 	"context"
 	"encoding/json"
+	"github.com/cbroglie/mustache"
 	"github.com/rs/zerolog/log"
-	"github.com/theirish81/gowalker"
 	"gopkg.in/yaml.v3"
 	"os"
 )
@@ -19,8 +19,8 @@ type Scope struct {
 
 const EnvValuesPath = "VALUES_PATH"
 const EnvValuesPathDefault = "etc/values.yaml"
-const VarParams = "Params"
-const VarValues = "Values"
+const VarParams = "params"
+const VarValues = "values"
 
 // NewScope is the constructor for Scope
 func NewScope() Scope {
@@ -65,7 +65,11 @@ func (s *Scope) PushResult(name string, value any, hide bool) {
 
 // Render renders a string template, against the Scope
 func (s *Scope) Render(ctx context.Context, data string) (string, error) {
-	return gowalker.Render(ctx, data, s.Scope, nil)
+	templ, err := mustache.ParseString(data)
+	if err != nil {
+		return "", err
+	}
+	return templ.Render(s.Scope)
 }
 
 // RenderMap will recursively traverse a map and try to render all strings it finds

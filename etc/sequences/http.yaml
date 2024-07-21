@@ -1,4 +1,4 @@
-description: pulling data off demoapi, and printing the ID of the product
+description: pulling data off JsonPlaceholder, and printing the name of the TODO
 accept_params: true
 requires:
   required:
@@ -10,14 +10,14 @@ steps:
   # We run a cURL command against a URL that returns JSON. Notice how we're pulling the
   # key out of the Values file. Once we get the result, we parse it into a JSON using
   # a filter.
-  - name: demoapi
+  - name: placeholder
     type: nixShellCommand
     config:
-      command: 'curl http://demoapi.apifortress.com/api/retail/product/${Params.id} -H "key:${Values.key}"'
+      command: 'curl https://jsonplaceholder.typicode.com/todos/{{params.id}}'
     filters:
       - type: jsonParse
   # We use the template operation to select and print the ID of the retrieved payload
-  - name: prodName
+  - name: title
     type: template
     config:
-      template: '${demoapi.name}'
+      template: '{{placeholder.title}}'
