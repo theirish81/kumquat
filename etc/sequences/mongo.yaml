@@ -10,7 +10,7 @@ steps:
     type: mongo
     config:
       URI: '{{values.mongodb_uri}}'
-      db: test_data
+      db: test
       collection: tests
       find:
         name: '{{params.name}}'
