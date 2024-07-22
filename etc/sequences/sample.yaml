@@ -17,7 +17,7 @@ steps:
   - name: firstProcess
     type: template
     config:
-      template: "${processes[0]}"
+      template: "{{processes.[0]}}"
     filters:
       - type: replace
         config:

@@ -9,8 +9,8 @@ steps:
   - name: data
     type: mongo
     config:
-      URI: '${Values.mongodb_uri}'
-      db: test_data
+      URI: '{{values.mongodb_uri}}'
+      db: test
       collection: tests
       find:
-        name: '${Params.name}'
+        name: '{{params.name}}'

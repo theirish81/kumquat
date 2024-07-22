@@ -13,14 +13,14 @@ steps:
     type: sql
     config:
       driver: postgres
-      URI: '${Values.postgres_uri}'
-      select: 'select * from table1 where id=${Params.id}'
+      URI: '{{values.postgres_uri}}'
+      select: 'select * from table1 where id={{params.id}}'
   # This is just a regular query to MariaDB/MySQL
   - name: mariadb
     type: sql
     config:
       driver: mysql
-      URI: '${Values.mysql_uri}'
+      URI: '{{Values.mysql_uri}}'
       select: 'select * from db'
   - name: sqlserver
     type: sql

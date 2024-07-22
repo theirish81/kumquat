@@ -21,7 +21,7 @@ func TestScope_InsertParams(t *testing.T) {
 	scope := NewScope()
 	data := map[string]any{"foo": "bar"}
 	scope.InsertParams(data)
-	if k, _ := scope.Scope["Params"].(map[string]any)["foo"]; k != "bar" {
+	if k, _ := scope.Scope["params"].(map[string]any)["foo"]; k != "bar" {
 		t.Error("params not set correctly")
 	}
 }
