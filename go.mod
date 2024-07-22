@@ -3,7 +3,7 @@ module github.com/theirish81/kumquat
 go 1.22
 
 require (
-	github.com/cbroglie/mustache v1.4.0
+	github.com/aymerick/raymond v2.0.2+incompatible
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v5 v5.0.0
