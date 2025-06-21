@@ -13,7 +13,7 @@ steps:
   - name: placeholder
     type: nixShellCommand
     config:
-      command: 'curl https://jsonplaceholder.typicode.com/todos/{{params.id}}'
+      command: "curl -v -H 'key:{{values.key}}' https://jsonplaceholder.typicode.com/todos/{{params.id}}"
     filters:
       - type: jsonParse
   # We use the template operation to select and print the ID of the retrieved payload
