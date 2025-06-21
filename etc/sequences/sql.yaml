@@ -20,7 +20,7 @@ steps:
     type: sql
     config:
       driver: mysql
-      URI: '{{Values.mysql_uri}}'
+      URI: '{{values.mysql_uri}}'
       select: 'select * from db'
   - name: sqlserver
     type: sql
