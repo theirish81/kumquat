@@ -3,7 +3,7 @@ package internal
 import (
 	"context"
 	"encoding/json"
-	"github.com/cbroglie/mustache"
+	"github.com/aymerick/raymond"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v3"
 	"os"
@@ -65,11 +65,7 @@ func (s *Scope) PushResult(name string, value any, hide bool) {
 
 // Render renders a string template, against the Scope
 func (s *Scope) Render(ctx context.Context, data string) (string, error) {
-	templ, err := mustache.ParseString(data)
-	if err != nil {
-		return "", err
-	}
-	return templ.Render(s.Scope)
+	return raymond.Render(data, s.Scope)
 }
 
 // RenderMap will recursively traverse a map and try to render all strings it finds
